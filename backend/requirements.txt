@@ -1,0 +1,17 @@
+# Astronomy and celestial calculations
+astropy==5.3.4
+pytz==2023.3
+
+# Data processing and machine learning
+numpy==1.25.2
+scikit-learn==1.3.2
+scipy==1.11.3  # Dependency for scikit-learn
+
+# For potential custom module
+# The kundli_analyzer module appears to be a custom module
+# Make sure it's in the same directory as your script
+
+# JSON handling is included in the Python standard library
+
+# Optional: for deployment
+gunicorn==21.2.0
