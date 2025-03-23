@@ -14,6 +14,10 @@ const TIMEZONEDB_API_KEY = '7W24C04UTE0P'; // Replace with your API key
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+app.get("/", (req, res)=>{
+  res.send("Server Running API Status - Live");
+})
+
 // Keep the original GET endpoint
 app.get('/hello', (req, res) => {
   const name = req.query.name || 'Guest';
