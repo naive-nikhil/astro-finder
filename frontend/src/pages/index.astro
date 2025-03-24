@@ -1,0 +1,159 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div
+    class="flex w-fit bg-white rounded-xl shadow-xl p-4 xl:flex-row xl:justify-center xl:items-center flex-col gap-5"
+  >
+    <div class="flex flex-col items-center gap-8 text-gray-600">
+      <h1 class="text-3xl font-bold text-center text-lime-600">
+        Aura Calculator
+      </h1>
+      <form
+        id="auraForm"
+        action=""
+        class="flex flex-col gap-4 [&_input]:outline [&_input]:outline-gray-300 [&_input]:px-4 [&_input]:py-2 w-full"
+      >
+        <div class="flex flex-col">
+          <label for="username">Enter Your Name</label>
+          <input type="text" name="username" />
+        </div>
+
+        <div class="flex flex-col">
+          <label for="date">Date of Birth</label>
+          <input type="date" name="date" />
+        </div>
+
+        <div class="flex flex-col">
+          <label for="time">Time of Birth</label>
+          <input type="time" name="time" />
+        </div>
+
+        <div class="flex flex-col">
+          <label for="place">Enter Your Birth Place</label>
+          <input type="text" name="place" />
+        </div>
+
+        <button
+          type="submit"
+          class="bg-lime-600 px-4 py-3 w-fit text-xl text-white font-bold mt-2 cursor-pointer"
+          >Calculate Aura</button
+        >
+      </form>
+    </div>
+    <div id="result" class="flex justify-center items-center"></div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("auraForm");
+    const resultDiv = document.getElementById("result");
+    const backendUrl = "https://astronomy-o8s6.onrender.com"; // Hosted backend URL
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      let name = form.username.value.trim();
+      let date = form.date.value;
+      let time = form.time.value;
+      let place = form.place.value.trim();
+
+      if (!name || !date || !time || !place) {
+        resultDiv.innerHTML = `<p class="text-red-500">All fields are required.</p>`;
+        return;
+      }
+
+      // Show loading animation
+      resultDiv.innerHTML = `
+		  <div class="flex justify-center items-center space-x-2 text-gray-600 text-lg font-semibold">
+			<span class="loading-dot animate-bounce">•</span>
+			<span class="loading-dot animate-bounce delay-200">•</span>
+			<span class="loading-dot animate-bounce delay-400">•</span>
+			<p class="ml-2">Fetching your aura...</p>
+		  </div>
+		`;
+
+      // Format date: "26 Jul 2001"
+      const dateObj = new Date(date);
+      const formattedDate = dateObj.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+
+      // Format time: "04:00:00"
+      const formattedTime = `${time}:00`;
+
+      try {
+        // Fetch greeting message
+        const helloResponse = await fetch(
+          `${backendUrl}/hello?name=${encodeURIComponent(name)}`
+        );
+        const helloData = await helloResponse.json();
+
+        // Fetch aura analysis
+        const processResponse = await fetch(`${backendUrl}/api/process`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date: formattedDate,
+            time: formattedTime,
+            place,
+          }),
+        });
+
+        const processData = await processResponse.json();
+
+        // Generate shareable message
+        const shareText = encodeURIComponent(
+          `🔮 ${helloData.message}\n\n🌟 Strongest Point: ${processData["Strongest Point"]}\n❌ Weakest Point: ${processData["Weakest Point"]}\n✅ ${processData["Good Line"]}\n🌀 ${processData.Guna}\n🌍 Location: ${place}\n\nCheck your aura now!`
+        );
+
+        // Display result
+        resultDiv.innerHTML = `
+			<div class="bg-gray-100 p-6 rounded-lg shadow-md text-gray-700 space-y-4">
+			  <h2 class="text-3xl font-bold text-lime-600">${helloData.message}</h2>
+			  <div class="border-t pt-4">
+				<p><strong class="text-lg">🟢 Strongest Point:</strong> ${processData["Strongest Point"]}</p>
+				<p><strong class="text-lg">🔴 Weakest Point:</strong> ${processData["Weakest Point"]}</p>
+			  </div>
+			  <div class="border-t pt-4">
+				<p class="text-green-600"><strong>✅ Good Line:</strong> ${processData["Good Line"]}</p>
+				<p class="text-red-600"><strong>❌ Bad Line:</strong> ${processData["Bad Line"]}</p>
+			  </div>
+			  <div class="border-t pt-4">
+				<p><strong class="text-lg">🌀 Guna:</strong> ${processData.Guna}</p>
+				<p><strong class="text-lg">🌟 Rarity:</strong> ${processData.Rarity}</p>
+			  </div>
+			  <div class="border-t pt-4 text-gray-500 text-sm">
+				<p>📅 Date: ${processData.original_data.date} | ⏰ Time: ${processData.original_data.time}</p>
+				<p>📍 Location: ${place}</p>
+			  </div>
+			  <div class="mt-4 flex space-x-2">
+				<button onclick="copyLink()" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">
+				  📋 Copy Link
+				</button>
+				<a href="https://wa.me/?text=${shareText}" target="_blank" class="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600">
+				  📤 Share on WhatsApp
+				</a>
+				<a href="https://twitter.com/intent/tweet?text=${shareText}" target="_blank" class="px-4 py-2 bg-blue-400 text-white rounded-lg shadow hover:bg-blue-500">
+				  🐦 Share on Twitter
+				</a>
+			  </div>
+			</div>
+		  `;
+      } catch (error) {
+        console.error("Error:", error);
+        resultDiv.innerHTML = `<p class="text-red-500">Something went wrong. Try again.</p>`;
+      }
+    });
+  });
+
+  function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    alert("Link copied to clipboard!");
+  }
+</script>
