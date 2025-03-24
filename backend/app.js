@@ -7,6 +7,9 @@ const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 3000;
 const path = require('path');
+const os = require("os");  // Import OS module
+
+const pythonCommand = os.platform() === "win32" ? "py" : "python3"; // Detect OS
 
 const OPENCAGE_API_KEY = 'cd1a1102e21c48b6b20b80ecc2e7ed61'; // Replace with your API key
 const TIMEZONEDB_API_KEY = '7W24C04UTE0P'; // Replace with your API key
@@ -91,7 +94,7 @@ app.post('/api/process', async (req, res) => {
   };
   
   // Spawn Python process
-  const pythonProcess = spawn('python3', [path.join(__dirname, 'process_data.py')]);
+  const pythonProcess = spawn(pythonCommand, [path.join(__dirname, 'process_data.py')]);
   
   let pythonData = '';
   let pythonError = '';
