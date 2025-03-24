@@ -91,7 +91,7 @@ app.post('/api/process', async (req, res) => {
   };
   
   // Spawn Python process
-  const pythonProcess = spawn('python3', [path.join(__dirname, 'process_data.py')]);
+  const pythonProcess = spawn('py', [path.join(__dirname, 'process_data.py')]);
   
   let pythonData = '';
   let pythonError = '';
