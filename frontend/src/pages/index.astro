@@ -41,6 +41,15 @@ import Layout from "../layouts/Layout.astro";
           >Calculate Aura</button
         >
       </form>
+      <div class="flex">
+        <a
+          href="https://wa.me/?text=${Check Your Aura 🗿🔥\n\n here  https://aura-calc.netlify.app}"
+          target="_blank"
+          class="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600"
+        >
+          📤 Share on WhatsApp
+        </a>
+      </div>
     </div>
     <div id="result" class="flex justify-center items-center"></div>
   </div>
@@ -65,15 +74,33 @@ import Layout from "../layouts/Layout.astro";
         return;
       }
 
-      // Show loading animation
+      // Messages for loading animation
+      const loadingMessages = [
+        "Fetching your aura...",
+        "Asking SOULS...",
+        "Something is different in your Aura...",
+        "Almost there...",
+      ];
+
+      // Create the loading animation container
       resultDiv.innerHTML = `
-		  <div class="flex justify-center items-center space-x-2 text-gray-600 text-lg font-semibold">
-			<span class="loading-dot animate-bounce">•</span>
-			<span class="loading-dot animate-bounce delay-200">•</span>
-			<span class="loading-dot animate-bounce delay-400">•</span>
-			<p class="ml-2">Fetching your aura...</p>
-		  </div>
-		`;
+      <div id="loading-container" class="flex  justify-center items-center text-gray-600 text-lg font-semibold">
+        <div class="flex space-x-2 mr-2">
+          <span class="loading-dot animate-bounce">•</span>
+          <span class="loading-dot animate-bounce delay-200">•</span>
+          <span class="loading-dot animate-bounce delay-400">• </span>
+        </div>
+        <p id="loading-text">${loadingMessages[0]}</p>
+      </div>
+    `;
+
+      // Start changing text at intervals
+      let messageIndex = 0;
+      const loadingText = document.getElementById("loading-text");
+      const interval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+        loadingText.textContent = loadingMessages[messageIndex];
+      }, 6000); // Change message every 1.5 seconds
 
       // Format date: "26 Jul 2001"
       const dateObj = new Date(date);
