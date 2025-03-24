@@ -43,7 +43,7 @@ import Layout from "../layouts/Layout.astro";
       </form>
       <div class="flex">
         <a
-          href="https://wa.me/?text=${Check Your Aura 🗿🔥\n\n here  https://aura-calc.netlify.app}"
+          href="https://wa.me/?text=Check Your Aura 🗿🔥\n\n here https://aura-calc.netlify.app"
           target="_blank"
           class="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600"
         >
@@ -107,6 +107,8 @@ import Layout from "../layouts/Layout.astro";
 
         // Adjust the path based on your actual folder structure
         const memePath = "/chutiyaimage.webp"; // Change this if needed
+
+        form?.classList.add("hidden");
 
         resultDiv.innerHTML = `
         <div class="bg-gray-100 p-6 rounded-lg shadow-md text-gray-700 space-y-4">
